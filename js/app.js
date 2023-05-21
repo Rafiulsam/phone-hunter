@@ -1,17 +1,24 @@
-const loadPhone = async (searchText) => {
+const loadPhone = async (searchText, dataLimit) => {
     const url = `https://openapi.programming-hero.com/api/phones?search=${searchText}`
     const res = await fetch(url)
     const data = await res.json()
-    displayPhone(data.data)
+    displayPhone(data.data, dataLimit)
 }
-loadPhone('phone')
+loadPhone('apple')
 
-const displayPhone = phones => {
-    console.log(phones);
+const displayPhone = (phones, dataLimit) => {
     const phoneContainer = document.getElementById('phone-container')
     phoneContainer.textContent = '';
     // display 10 phone 
-    phones = phones.slice(0, 10)
+    const showAll = document.getElementById('show-all')
+    if (dataLimit && phones.length > 9) {
+        phones = phones.slice(0, 9)
+        showAll.classList.remove('d-none')
+
+    }
+    else{
+        showAll.classList.add('d-none')
+    }
 
     // display warning msg 
     const noFound = document.getElementById('no-found-msg')
@@ -32,6 +39,7 @@ const displayPhone = phones => {
                             <h5 class="card-title">${phone.phone_name}</h5>
                             <p class="card-text">This is a longer card with supporting text below as a natural lead-in
                                 to additional content. This content is a little bit longer.</p>
+                                <button onclick="loadPhoneDetails('${phone.slug}')" href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#phoneModal">Phone Details</button>
                         </div>
                     </div>
         `
@@ -42,25 +50,43 @@ const displayPhone = phones => {
     toggleSpinier(false)
 }
 
-document.getElementById('btn-search').addEventListener('click', function () {
+document.getElementById('input-field').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        makeSearch(9)
+    }
+});
+
+
+const makeSearch= (dataLimit) =>{
     toggleSpinier(true)
     const inputValue = document.getElementById('input-field').value
-    document.getElementById('input-field').value = '';
     if (inputValue === '') {
         alert('Please enter texts')
         toggleSpinier(false)
     }
     else {
-        loadPhone(inputValue)
+        loadPhone(inputValue, dataLimit)
     }
+}
+document.getElementById('btn-search').addEventListener('click', function () {
+    makeSearch(9)
 })
-
-const toggleSpinier = isLoading =>{
+document.getElementById('btn-show-all').addEventListener('click', function () {
+    makeSearch()
+ })
+const toggleSpinier = isLoading => {
     const loaderSection = document.getElementById('loader')
     if (isLoading) {
         loaderSection.classList.remove('d-none')
     }
-    else{
+    else {
         loaderSection.classList.add('d-none')
     }
+}
+
+const loadPhoneDetails = async id => {
+    const url = `https://openapi.programming-hero.com/api/phone/${id}`
+    const res = await fetch(url)
+    const data = await res.json()
+    console.log(data.data);
 }
