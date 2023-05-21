@@ -16,7 +16,7 @@ const displayPhone = (phones, dataLimit) => {
         showAll.classList.remove('d-none')
 
     }
-    else{
+    else {
         showAll.classList.add('d-none')
     }
 
@@ -57,7 +57,7 @@ document.getElementById('input-field').addEventListener('keypress', function (e)
 });
 
 
-const makeSearch= (dataLimit) =>{
+const makeSearch = (dataLimit) => {
     toggleSpinier(true)
     const inputValue = document.getElementById('input-field').value
     if (inputValue === '') {
@@ -73,7 +73,7 @@ document.getElementById('btn-search').addEventListener('click', function () {
 })
 document.getElementById('btn-show-all').addEventListener('click', function () {
     makeSearch()
- })
+})
 const toggleSpinier = isLoading => {
     const loaderSection = document.getElementById('loader')
     if (isLoading) {
@@ -88,5 +88,20 @@ const loadPhoneDetails = async id => {
     const url = `https://openapi.programming-hero.com/api/phone/${id}`
     const res = await fetch(url)
     const data = await res.json()
-    console.log(data.data);
+    displayPhoneDetails(data.data);
+}
+
+
+const displayPhoneDetails = phone =>{
+    console.log(phone);
+    document.getElementById('phoneModalLabel').innerText = phone.name
+    const modalBody = document.getElementById('phone-details')
+    modalBody.innerHTML =`
+        <p>Release Date: ${phone.releaseDate ? phone.releaseDate : 'no release date found'} </p>
+        <p>Chip Set: ${phone.mainFeatures ? phone.mainFeatures.chipSet : 'no chip set found'}
+        <p>Display Size: ${phone.mainFeatures ? phone.mainFeatures.displaySize : 'no display size found'}</p>
+        <p>Memory: ${phone.mainFeatures ? phone.mainFeatures.memory : 'no memory found'}</p>
+        <p>Storage: ${phone.mainFeatures ? phone.mainFeatures.storage : 'no storage found'}</p>
+    
+    `
 }
